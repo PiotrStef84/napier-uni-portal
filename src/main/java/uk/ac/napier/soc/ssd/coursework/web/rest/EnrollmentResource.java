@@ -3,6 +3,7 @@ package uk.ac.napier.soc.ssd.coursework.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.security.access.prepost.PreAuthorize;
 import uk.ac.napier.soc.ssd.coursework.domain.Enrollment;
 import uk.ac.napier.soc.ssd.coursework.repository.EnrollmentRepository;
 import uk.ac.napier.soc.ssd.coursework.repository.HibernateUtil;
@@ -54,6 +55,7 @@ public class EnrollmentResource {
      */
     @PostMapping("/enrollments")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Enrollment> createEnrollment(@RequestBody Enrollment enrollment) throws URISyntaxException {
         log.debug("REST request to save Enrollment : {}", enrollment);
         if (enrollment.getId() != null) {
@@ -77,6 +79,7 @@ public class EnrollmentResource {
      */
     @PutMapping("/enrollments")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Enrollment> updateEnrollment(@RequestBody Enrollment enrollment) throws URISyntaxException {
         log.debug("REST request to update Enrollment : {}", enrollment);
         if (enrollment.getId() == null) {
@@ -96,6 +99,7 @@ public class EnrollmentResource {
      */
     @GetMapping("/enrollments")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Enrollment> getAllEnrollments(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Enrollments");
         return enrollmentRepository.findAllWithEagerRelationships();
@@ -109,6 +113,7 @@ public class EnrollmentResource {
      */
     @GetMapping("/enrollments/{id}")
     @Timed
+    @PreAuthorize("hasRole('USER') || hasRole('ADMIN')")
     public ResponseEntity<Enrollment> getEnrollment(@PathVariable Long id) {
         log.debug("REST request to get Enrollment : {}", id);
         Optional<Enrollment> enrollment = enrollmentRepository.findOneWithEagerRelationships(id);
@@ -123,6 +128,7 @@ public class EnrollmentResource {
      */
     @DeleteMapping("/enrollments/{id}")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteEnrollment(@PathVariable Long id) {
         log.debug("REST request to delete Enrollment : {}", id);
 
@@ -140,6 +146,7 @@ public class EnrollmentResource {
      */
     @GetMapping("/_search/enrollments")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Enrollment> searchEnrollments(@RequestParam String query) {
         log.debug("REST request to search Enrollments for query {}", query);
         Session session = HibernateUtil.getSession();

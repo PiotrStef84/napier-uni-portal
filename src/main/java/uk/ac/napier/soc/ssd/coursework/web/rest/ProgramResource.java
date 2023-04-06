@@ -1,6 +1,7 @@
 package uk.ac.napier.soc.ssd.coursework.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import org.springframework.security.access.prepost.PreAuthorize;
 import uk.ac.napier.soc.ssd.coursework.domain.Program;
 import uk.ac.napier.soc.ssd.coursework.repository.ProgramRepository;
 import uk.ac.napier.soc.ssd.coursework.repository.search.ProgramSearchRepository;
@@ -53,6 +54,7 @@ public class ProgramResource {
      */
     @PostMapping("/programs")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Program> createProgram(@Valid @RequestBody Program program) throws URISyntaxException {
         log.debug("REST request to save Program : {}", program);
         if (program.getId() != null) {
@@ -76,6 +78,7 @@ public class ProgramResource {
      */
     @PutMapping("/programs")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Program> updateProgram(@Valid @RequestBody Program program) throws URISyntaxException {
         log.debug("REST request to update Program : {}", program);
         if (program.getId() == null) {
@@ -94,6 +97,7 @@ public class ProgramResource {
      */
     @GetMapping("/programs")
     @Timed
+    @PreAuthorize("hasRole('USER') || hasRole('ADMIN')")
     public List<Program> getAllPrograms() {
         log.debug("REST request to get all Programs");
         return programRepository.findAll();
@@ -107,6 +111,7 @@ public class ProgramResource {
      */
     @GetMapping("/programs/{id}")
     @Timed
+    @PreAuthorize("hasRole('USER') || hasRole('ADMIN')")
     public ResponseEntity<Program> getProgram(@PathVariable Long id) {
         log.debug("REST request to get Program : {}", id);
         Optional<Program> program = programRepository.findById(id);
@@ -121,6 +126,7 @@ public class ProgramResource {
      */
     @DeleteMapping("/programs/{id}")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProgram(@PathVariable Long id) {
         log.debug("REST request to delete Program : {}", id);
 
@@ -138,6 +144,7 @@ public class ProgramResource {
      */
     @GetMapping("/_search/programs")
     @Timed
+    @PreAuthorize("hasRole('USER') || hasRole('ADMIN')")
     public List<Program> searchPrograms(@RequestParam String query) {
         log.debug("REST request to search Programs for query {}", query);
         // TODO: Implement the search functionality

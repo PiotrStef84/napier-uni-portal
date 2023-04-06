@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Admin",
+        "description": "Admins can do everything.",
+        "target": "subject.authorities.![authority].contains('ROLE_ADMIN')",
+        "condition": "true"
+    },
+    {
+        "name": "User",
+        "description": "Users can view their own enrollment.",
+        "target": "subject.authorities.![authority].contains('ROLE_USER') && action == 'VIEW_ENROLLMENT'",
+        "condition": "subject.username == resource.user.login"
+    },
+    {
+        "name": "User",
+        "description": "Users can view their own enrollments.",
+        "target": "subject.authorities.![authority].contains('ROLE_USER') && action == 'VIEW_ENROLLMENTS'",
+        "condition": "subject.username == resource.user.login"
+    },
+    {
+        "name": "User",
+        "description": "Users can view programs.",
+        "target": "subject.authorities.![authority].contains('ROLE_USER') && action == 'VIEW_PROGRAMS'",
+        "condition": "true"
+    },
+    {
+        "name": "User",
+        "description": "Users can view a program.",
+        "target": "subject.authorities.![authority].contains('ROLE_USER') && action == 'VIEW_PROGRAM'",
+        "condition": "true"
+    }
+]

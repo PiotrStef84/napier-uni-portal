@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.owasp.encoder.Encode;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import uk.ac.napier.soc.ssd.coursework.domain.Course;
 import uk.ac.napier.soc.ssd.coursework.domain.validators.CourseValidator;
@@ -67,6 +68,7 @@ public class CourseResource {
      */
     @PostMapping("/courses")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Course> createCourse(@Valid @RequestBody Course course) throws URISyntaxException {
         log.debug("REST request to save Course : {}", course);
         if (course.getId() != null) {
@@ -89,6 +91,7 @@ public class CourseResource {
      */
     @PutMapping("/courses")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Course> updateCourse(@Valid @RequestBody Course course) throws URISyntaxException {
         log.debug("REST request to update Course : {}", course);
         if (course.getId() == null) {
@@ -108,6 +111,7 @@ public class CourseResource {
      */
     @GetMapping("/courses")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Course> getAllCourses(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get all Courses");
         return courseRepository.findAllWithEagerRelationships();
@@ -121,6 +125,7 @@ public class CourseResource {
      */
     @GetMapping("/courses/{id}")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Course> getCourse(@PathVariable Long id) {
         log.debug("REST request to get Course : {}", id);
         Optional<Course> course = courseRepository.findOneWithEagerRelationships(id);
@@ -138,6 +143,7 @@ public class CourseResource {
      */
     @DeleteMapping("/courses/{id}")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
         log.debug("REST request to delete Course : {}", id);
 
@@ -154,6 +160,7 @@ public class CourseResource {
      */
     @GetMapping("/_search/courses")
     @Timed
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Course> searchCourses(@RequestParam String query) {
         log.debug("REST request to search Courses for query {}", query);
 

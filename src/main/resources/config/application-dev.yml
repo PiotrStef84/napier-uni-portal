@@ -142,3 +142,4 @@ jhipster:
 # ===================================================================
 
 # application:
+policy.json.filePath: /home/student/Secure-Software-Development-Module-Coursework/NapierUniPortal/src/main/resources/config/default-policy.json
