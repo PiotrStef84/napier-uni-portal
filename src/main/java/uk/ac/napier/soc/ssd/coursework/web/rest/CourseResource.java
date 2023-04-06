@@ -3,6 +3,7 @@ package uk.ac.napier.soc.ssd.coursework.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.owasp.encoder.Encode;
 import org.springframework.web.bind.WebDataBinder;
 import uk.ac.napier.soc.ssd.coursework.domain.Course;
 import uk.ac.napier.soc.ssd.coursework.domain.validators.CourseValidator;
@@ -123,6 +124,9 @@ public class CourseResource {
     public ResponseEntity<Course> getCourse(@PathVariable Long id) {
         log.debug("REST request to get Course : {}", id);
         Optional<Course> course = courseRepository.findOneWithEagerRelationships(id);
+
+        String encoded = Encode.forHtmlContent(course.get().getDescription());
+        course.get().setDescription(encoded);
         return ResponseUtil.wrapOrNotFound(course);
     }
 
