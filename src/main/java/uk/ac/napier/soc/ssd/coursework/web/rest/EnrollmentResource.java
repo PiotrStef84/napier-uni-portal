@@ -1,30 +1,27 @@
 package uk.ac.napier.soc.ssd.coursework.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import uk.ac.napier.soc.ssd.coursework.abac.security.spring.ContextAwarePolicyEnforcement;
 import uk.ac.napier.soc.ssd.coursework.domain.Enrollment;
 import uk.ac.napier.soc.ssd.coursework.repository.EnrollmentRepository;
 import uk.ac.napier.soc.ssd.coursework.repository.HibernateUtil;
 import uk.ac.napier.soc.ssd.coursework.repository.search.EnrollmentSearchRepository;
 import uk.ac.napier.soc.ssd.coursework.web.rest.errors.BadRequestAlertException;
 import uk.ac.napier.soc.ssd.coursework.web.rest.util.HeaderUtil;
-import io.github.jhipster.web.util.ResponseUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Enrollment.
@@ -40,6 +37,9 @@ public class EnrollmentResource {
     private final EnrollmentRepository enrollmentRepository;
 
     private final EnrollmentSearchRepository enrollmentSearchRepository;
+
+    @Autowired
+    private ContextAwarePolicyEnforcement policy;
 
     public EnrollmentResource(EnrollmentRepository enrollmentRepository, EnrollmentSearchRepository enrollmentSearchRepository) {
         this.enrollmentRepository = enrollmentRepository;
@@ -117,6 +117,7 @@ public class EnrollmentResource {
     public ResponseEntity<Enrollment> getEnrollment(@PathVariable Long id) {
         log.debug("REST request to get Enrollment : {}", id);
         Optional<Enrollment> enrollment = enrollmentRepository.findOneWithEagerRelationships(id);
+        policy.checkPermission(enrollment.get(), "VIEW_ENROLLMENT");
         return ResponseUtil.wrapOrNotFound(enrollment);
     }
 
