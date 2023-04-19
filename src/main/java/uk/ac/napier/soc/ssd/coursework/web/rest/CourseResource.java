@@ -7,6 +7,7 @@ import org.owasp.encoder.Encode;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import uk.ac.napier.soc.ssd.coursework.domain.Course;
+import uk.ac.napier.soc.ssd.coursework.domain.Enrollment;
 import uk.ac.napier.soc.ssd.coursework.domain.validators.CourseValidator;
 import uk.ac.napier.soc.ssd.coursework.repository.CourseRepository;
 import uk.ac.napier.soc.ssd.coursework.repository.HibernateUtil;
@@ -164,28 +165,11 @@ public class CourseResource {
     public List<Course> searchCourses(@RequestParam String query) {
         log.debug("REST request to search Courses for query {}", query);
 
+        Session session = HibernateUtil.getSession();
+        Query q = session.createQuery("select course from Course course where course.description like '%" + query + "%'");
+        return q.list();
 
-        String queryStatement = "SELECT * FROM course WHERE description like '%" + query + "%'";
-        log.info("Final SQL query {}", queryStatement);
 
-        ResultSet rs = null;
-
-        // TODO: use Hibernate language instead
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/NapierUniPortal", "root", "root"); Statement stmt = con.createStatement()) {
-            rs = stmt.executeQuery(queryStatement);
-            return extractCourse(rs);
-        } catch (SQLException ex) {
-            log.error(ex.getMessage(), ex);
-            return new ArrayList();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-            } catch (SQLException ex) {
-                log.error(ex.getMessage(), ex);
-            }
-        }
     }
 
     private List<Course> extractCourse(ResultSet rs) throws SQLException {
