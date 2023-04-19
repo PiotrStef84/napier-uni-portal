@@ -166,8 +166,11 @@ public class CourseResource {
         log.debug("REST request to search Courses for query {}", query);
 
         Session session = HibernateUtil.getSession();
-        Query q = session.createQuery("select course from Course course where course.description like '%" + query + "%'");
-        return q.list();
+        Query q = session.createQuery("select course from Course course where course.description like % :query %");
+        q.setParameter("query", query);
+        List queryResults = q.setString("query", query).list();
+        return queryResults;
+
 
 
     }

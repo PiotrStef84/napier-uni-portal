@@ -151,7 +151,8 @@ public class EnrollmentResource {
     public List<Enrollment> searchEnrollments(@RequestParam String query) {
         log.debug("REST request to search Enrollments for query {}", query);
         Session session = HibernateUtil.getSession();
-        Query q = session.createQuery("select enrollment from Enrollment enrollment where enrollment.comments like '%" + query + "%'");
+        Query q = session.createQuery("select enrollment from Enrollment enrollment where enrollment.comments like % :query %");
+        q.setParameter("query", query);
         return q.list();
     }
 
